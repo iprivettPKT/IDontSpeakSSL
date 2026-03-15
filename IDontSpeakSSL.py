@@ -48,7 +48,7 @@ class Report:
             self.stag('link', ("rel", "stylesheet"), ("href", "./html/css/bootstrap.min.css".format(self.reportDir)) )
             self.line('script', '', src="./html/js/jquery.min.js".format(self.reportDir))
             self.line('script', '', src="./html/js/bootstrap.min.js".format(self.reportDir))
-            
+
 
     def addScope(self):
         with self.tag('ul'):
@@ -61,7 +61,7 @@ class Report:
         with self.tag('body'):
             with self.tag('div'):
                 self.doc.attr(klass='container')
-                self.line('h1', 'IDontSpeakSSL Report') 
+                self.line('h1', 'IDontSpeakSSL Report')
                 with self.tag('p'):
                     self.text('Report of IDontSpeakSSL script, All findings are split into sections.')
                     self.stag('br')
@@ -98,15 +98,15 @@ class Report:
             findingid=0
             for finding in (findingConfig[findingType]).keys():
                 if(os.path.exists( "{}/{}/{}".format(self.reportDir, folder,(findingConfig[findingType])[finding][0]))):
-                    with self.tag('div', klass='panel panel-default'):                                                                                                   
+                    with self.tag('div', klass='panel panel-default'):
                         with self.tag('div', klass='panel-heading'):
                             with self.tag('div', klass='panel-title'):
                                 with self.tag('h4', klass='panel-title'):
                                     with self.tag('a', ("data-toggle", "collapse"), ("href" ,"#{}{}".format(findingType,findingid))):
                                         self.text("{}".format((findingConfig[findingType])[finding][2]))
-                        with self.tag('div'):                                                                 
-                            self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))    
-                            with self.tag('div', klass='panel-body'):                                            
+                        with self.tag('div'):
+                            self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))
+                            with self.tag('div', klass='panel-body'):
                                 self.text("{}".format((findingConfig[findingType])[finding][3]))
                                 self.listAssets(folder, (findingConfig[findingType])[finding][0])
                     findingid+=1
@@ -116,32 +116,32 @@ class Report:
                     findingid+=1
                 if(os.path.exists( "{}/{}/{}".format(self.reportDir, folder,"Issuers.txt"))):
                     self.addCertificateIssuers(findingType,findingid, folder)
-    
+
     def addCertificateValidity(self, findingType, findingid, folder):
-        with self.tag('div', klass='panel panel-default'):                                                                                               
+        with self.tag('div', klass='panel panel-default'):
             with self.tag('div', klass='panel-heading'):
                 with self.tag('div', klass='panel-title'):
                     with self.tag('h4', klass='panel-title'):
                         with self.tag('a', ("data-toggle", "collapse"), ("href" ,"#{}{}".format(findingType,findingid))):
                             self.text("{}".format("Certificate With Too Long Validity Period"))
-            with self.tag('div'):                                                                 
-                self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))    
-                with self.tag('div', klass='panel-body'):                                            
+            with self.tag('div'):
+                self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))
+                with self.tag('div', klass='panel-body'):
                     self.text("{}".format("Certificate validity period must be limited to 39 months for certificates issued before March 1st, 2018, or 825 days for certificates issued after March 1st, 2018.<br>(https://www.globalsign.com/en/blog/ssl-certificate-validity-capped-at-maximum-two-years/)<br>(https://www.symantec.com/connect/blogs/new-39-month-ssl-certificate-maximum-validity)"))
                     self.listAssets(folder,"TooLongCetificateValidity.txt")
 
 
 
     def addCertificateIssuers(self, findingType, findingid, folder):
-        with self.tag('div', klass='panel panel-default'):                                                                                               
+        with self.tag('div', klass='panel panel-default'):
             with self.tag('div', klass='panel-heading'):
                 with self.tag('div', klass='panel-title'):
                     with self.tag('h4', klass='panel-title'):
                         with self.tag('a', ("data-toggle", "collapse"), ("href" ,"#{}{}".format(findingType,findingid))):
                             self.text("{}".format("Certificate Issuers"))
-            with self.tag('div'):                                                                 
-                self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))    
-                with self.tag('div', klass='panel-body'):                                            
+            with self.tag('div'):
+                self.doc.attr(klass='panel-collapse collapse', id='{}{}'.format(findingType,findingid))
+                with self.tag('div', klass='panel-body'):
                     self.text("{}".format("Certificate Issuers must be check from your end, all certificates must be issued by a trusted Certificate Authority. The CA could be a publicly known certificate authorithy such as Symantec, Verisign, etc. or an internal CA."))
                     self.listAssets(folder,"Issuers.txt" )
 
@@ -158,7 +158,7 @@ def scanTarget(queue):
         ip, testssl, scandir, ipid, ipnb = queue.get()
         if((testConnection(ip))==0):
             cprint("[-] {}/{} Scanning {}".format(ipid, ipnb, ip), 'blue')
-            os.system("{} --color 0 {} > {}/TestSSLscans/{}.txt".format(testssl, ip, scandir, ip))  
+            os.system("{} --color 0 {} > {}/TestSSLscans/{}.txt".format(testssl, ip, scandir, ip))
             cprint("[+] {}/{} {} scan done".format(ipid, ipnb, ip), 'green')
         queue.task_done()
     return
@@ -182,7 +182,7 @@ def scan(scandir, iplist, testssl, nbWorker=8):
 
 
 """
-The function is here to test if the remote server got is port open, the domain name is valid and if 
+The function is here to test if the remote server got is port open, the domain name is valid and if
 it's offering SSL/TLS. The dunction will return:
 0 if everything is good
 1 if the port is not open
@@ -191,7 +191,8 @@ it's offering SSL/TLS. The dunction will return:
 def sslConnect(server, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(3)
-    wrappedSocket = ssl.wrap_socket(sock)
+    context = ssl.create_default_context()
+    wrappedSocket = context.wrap_socket(sock, server_hostname=server)
     try:
         wrappedSocket.connect((server,port))
     except (ssl.SSLError, socket.timeout, ConnectionRefusedError) as err:
@@ -213,7 +214,7 @@ def sslConnect(server, port):
 
 
 """
-The function is here to test if the remote server got is port open, the domain name is valid and if 
+The function is here to test if the remote server got is port open, the domain name is valid and if
 it's offering SSL/TLS. The dunction will return:
 0 if everything is good
 1 if the port is not open
@@ -300,7 +301,7 @@ def getConfigFromFile(configfile):
     with open(configfile, 'r') as f:
         for line in f:
             elems = (line.strip()).split(',')
-            findingConfig[elems[0]] = [elems[1] , elems[2], elems[3], elems[4]] 
+            findingConfig[elems[0]] = [elems[1] , elems[2], elems[3], elems[4]]
     return findingConfig
 
 def printStartMessage():
