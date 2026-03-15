@@ -256,9 +256,10 @@ def AnalyzeCertificates(folder, data, scandir, ip):
             writeResult("{}/{}/{}".format(scandir,folder,'TooLongCetificateValidity.txt'),"{}\t{} days\n".format(ip,Days))
     except:
         pass
-    Issuer = (re.findall('Issuer +(.+)', data))[0]
-    writeResult("{}/{}/{}".format(scandir,folder,'Issuers.txt'),"{}\t\t\t{}\n".format(ip.strip(), Issuer))
-
+    issuer_match = re.findall(r'Issuer +(.+)', data)
+    if issuer_match:
+        Issuer = issuer_match[0]
+        writeResult("{}/{}/{}".format(scandir,folder,'Issuers.txt'), "{}\t\t\t{}\n".format(ip.strip(), Issuer))
 
 def createDirectories(scandir):
     DirNames = ["Protocols","CipherSuites","Flaws","Certificates","Configurations", "TestSSLscans"]
